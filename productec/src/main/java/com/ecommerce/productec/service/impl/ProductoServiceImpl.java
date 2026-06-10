@@ -3,8 +3,10 @@ package com.ecommerce.productec.service.impl;
 import com.ecommerce.productec.dto.request.ProductoRequestDTO;
 import com.ecommerce.productec.dto.response.ProductoResponseDTO;
 import com.ecommerce.productec.mapper.ProductoMapper;
+import com.ecommerce.productec.model.Categoria;
 import com.ecommerce.productec.model.Producto;
 import com.ecommerce.productec.model.ProductoTipo;
+import com.ecommerce.productec.repository.CategoriaRepository;
 import com.ecommerce.productec.repository.ProductoRepository;
 import com.ecommerce.productec.repository.ProductoTipoRepository;
 import com.ecommerce.productec.service.ProductoService;
@@ -25,6 +27,9 @@ public class ProductoServiceImpl implements ProductoService {
     private ProductoTipoRepository productoTipoRepository;
     @Autowired
     private ProductoMapper productoMapper;
+    @Autowired
+    private CategoriaRepository categoriaRepository;
+
 
     //toDo: feign cliente usuario admin;
     @Override
@@ -34,7 +39,11 @@ public class ProductoServiceImpl implements ProductoService {
                 .orElseThrow(() -> new RuntimeException(
                         "Tipo de producto no encontrado con id: " + dto.getTipoId()
                 ));
-        Producto producto = productoMapper.toEntity(dto,productoTipo);
+        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Categoría no encontrada con id: " + dto.getCategoriaId()
+                ));
+        Producto producto = productoMapper.toEntity(dto,productoTipo, categoria );
 
         Producto productoGuardado = productoRepository.save(producto);
 
@@ -51,8 +60,8 @@ public class ProductoServiceImpl implements ProductoService {
 
 
     @Override
-    public List<ProductoResponseDTO> listarPorTipo(String nombre) {
-        return productoRepository.findByTipoNombre(nombre)
+    public List<ProductoResponseDTO> listarPorTipoYCategoria(String tipoNombre, String categoriaNombre) {
+        return productoRepository.findByTipoNombreAndCategoriaNombre(tipoNombre, categoriaNombre)
                 .stream()
                 .map(productoMapper::toDto)
                 .toList();
@@ -79,8 +88,11 @@ public class ProductoServiceImpl implements ProductoService {
                 .orElseThrow(() -> new RuntimeException(
                         "Tipo de producto no encontrado con id: " + dto.getTipoId()
                 ));
-
-        productoMapper.updateEntity(dto, producto, tipo);
+        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
+                .orElseThrow(() -> new RuntimeException(
+                        "Categoría no encontrada con id: " + dto.getCategoriaId()
+                ));
+        productoMapper.updateEntity(dto, producto, tipo, categoria);
         return productoMapper.toDto(productoRepository.save(producto));
     }
 

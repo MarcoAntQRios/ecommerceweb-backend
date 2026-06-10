@@ -29,11 +29,14 @@ public class ProductoController {
     public ResponseEntity<List<ProductoResponseDTO>> listar() {
         return ResponseEntity.ok(productoService.listar());
     }
-    @GetMapping("/tipo/{nombre}")
-    public ResponseEntity<List<ProductoResponseDTO>> listarPorTipo(
-            @PathVariable String nombre) {
-        return ResponseEntity.ok(productoService.listarPorTipo(nombre));
+
+    @GetMapping("/filtrar")
+    public ResponseEntity<List<ProductoResponseDTO>> listarPorTipoYCategoria(
+            @RequestParam String tipo,
+            @RequestParam(required = false) String categoria) {
+        return ResponseEntity.ok(productoService.listarPorTipoYCategoria(tipo, categoria));
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<ProductoResponseDTO> buscarPorId(
             @PathVariable Long id) {

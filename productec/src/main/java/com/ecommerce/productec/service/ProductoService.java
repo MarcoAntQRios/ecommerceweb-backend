@@ -8,7 +8,7 @@ import java.util.List;
 public interface ProductoService {
     ProductoResponseDTO create (ProductoRequestDTO dto);
     List<ProductoResponseDTO> listar();
-    List<ProductoResponseDTO> listarPorTipo(String nombre);
+    List<ProductoResponseDTO> listarPorTipoYCategoria(String tipoNombre, String categoriaNombre);
     ProductoResponseDTO buscarPorId(Long id);
     ProductoResponseDTO actualizar(Long id, ProductoRequestDTO dto);
     ProductoResponseDTO actualizarStock(Long id, Integer stock);
