@@ -49,15 +49,19 @@ public class CarritoServiceImpl implements CarritoService {
                 .orElseThrow(() -> new RuntimeException(
                         "Carrito no encontrado con id: " + carritoId
                 ));
+
         UsuarioResponseDTO usuario = usuarioTecCliente.obtener(carrito.getUsuarioId()).orElse(null);
         CarritoResponseDTO carritoResponseDTO = carritoMapper.toDto(carrito);
         if (usuario != null) {
             carritoResponseDTO.setUsuarioNombre(usuario.getNombre());
         }
-        //mostrar nombre del producto en el detalle
+
         carritoResponseDTO.getDetalleCarrito().forEach(detalle ->
                 productoCliente.obtener(detalle.getProductoId())
-                        .ifPresent(producto -> detalle.setProductoNombre(producto.getNombre()))
+                        .ifPresent(producto -> {
+                            detalle.setProductoNombre(producto.getNombre());
+                            detalle.setProductoImagen(producto.getImagen());
+                        })
         );
 
         return carritoResponseDTO;

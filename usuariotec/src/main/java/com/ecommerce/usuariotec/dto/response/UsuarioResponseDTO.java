@@ -11,4 +11,5 @@ public class UsuarioResponseDTO {
     private String telefono;
     private String direccion;
     private String rolNombre;
+    private Long rolId;
 }

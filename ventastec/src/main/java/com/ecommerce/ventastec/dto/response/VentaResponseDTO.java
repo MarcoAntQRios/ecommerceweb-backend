@@ -12,5 +12,6 @@ public class VentaResponseDTO {
     private LocalDateTime fecha;
     private Double total;
     private String estado;
+    private String urlCheckout;
     private List<DetalleVentaResponseDTO> detalleVenta;
 }

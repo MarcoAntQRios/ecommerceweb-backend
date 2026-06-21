@@ -1,0 +1,167 @@
+services:
+  eureka-server:
+    build:
+      context: ./eureka-server
+    image: springcloud/eureka-server:local
+    container_name: eureka-server
+    environment:
+      EUREKA_HOST: eureka-server
+    ports:
+      - "8762:8761"
+    networks:
+      - private-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  config-server:
+    build:
+      context: ./config-server
+    image: springcloud/config-server:local
+    container_name: config-server
+    environment:
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    expose:
+      - "8090"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - private-net
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8090/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  auth-service:
+    build:
+      context: ./auth-service
+    image: springcloud/auth-service:local
+    container_name: auth-service
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8090
+      EUREKA_URL: http://eureka-server:8761/eureka/
+      JWT_SECRET: "553cb2d4b3e3e482ac4d4506560f9e045402f68b6e6cba0742550d67b4ca19c6"
+      JWT_EXPIRATION: 900000
+      DB_URL: jdbc:postgresql://ep-calm-pond-at9349ee.c-9.us-east-1.aws.neon.tech/ecommerce_db?currentSchema=usuariotec&sslmode=require
+      DB_USERNAME: neondb_owner
+      DB_PASSWORD: npg_VoxWvRLSY25r
+    expose:
+      - "8070"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - private-net
+
+  productec:
+    build:
+      context: ./productec
+    image: springcloud/productec:local
+    container_name: productec
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8090
+      EUREKA_URL: http://eureka-server:8761/eureka/
+      JWT_SECRET: "553cb2d4b3e3e482ac4d4506560f9e045402f68b6e6cba0742550d67b4ca19c6"
+      DB_URL: jdbc:postgresql://ep-calm-pond-at9349ee.c-9.us-east-1.aws.neon.tech/ecommerce_db?currentSchema=productec&sslmode=require
+      DB_USERNAME: neondb_owner
+      DB_PASSWORD: npg_VoxWvRLSY25r
+    expose:
+      - "8082"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - private-net
+
+  usuariotec:
+    build:
+      context: ./usuariotec
+    image: springcloud/usuariotec:local
+    container_name: usuariotec
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8090
+      EUREKA_URL: http://eureka-server:8761/eureka/
+      JWT_SECRET: "553cb2d4b3e3e482ac4d4506560f9e045402f68b6e6cba0742550d67b4ca19c6"
+      JWT_EXPIRATION: 900000
+      DB_URL: jdbc:postgresql://ep-calm-pond-at9349ee.c-9.us-east-1.aws.neon.tech/ecommerce_db?currentSchema=usuariotec&sslmode=require
+      DB_USERNAME: neondb_owner
+      DB_PASSWORD: npg_VoxWvRLSY25r
+    expose:
+      - "8081"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - private-net
+
+  ventastec:
+    build:
+      context: ./ventastec
+    image: springcloud/ventastec:local
+    container_name: ventastec
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8090
+      EUREKA_URL: http://eureka-server:8761/eureka/
+      JWT_SECRET: "553cb2d4b3e3e482ac4d4506560f9e045402f68b6e6cba0742550d67b4ca19c6"
+      JWT_EXPIRATION: 900000
+      DB_URL: jdbc:postgresql://ep-calm-pond-at9349ee.c-9.us-east-1.aws.neon.tech/ecommerce_db?currentSchema=ventastec&sslmode=require
+      DB_USERNAME: neondb_owner
+      DB_PASSWORD: npg_VoxWvRLSY25r
+    expose:
+      - "8083"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - private-net
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    image: springcloud/api-gateway:local
+    container_name: api-gateway
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8090
+      EUREKA_URL: http://eureka-server:8761/eureka/
+      JWT_SECRET: "553cb2d4b3e3e482ac4d4506560f9e045402f68b6e6cba0742550d67b4ca19c6"
+    ports:
+      - "8061:8060"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+      productec:
+        condition: service_started
+      usuariotec:
+        condition: service_started
+      ventastec:
+        condition: service_started
+    networks:
+      - private-net
+      - public-net
+
+networks:
+  private-net:
+    driver: bridge
+  public-net:
+    driver: bridge
+
+volumes:
+  postgres-ecommerce-data:

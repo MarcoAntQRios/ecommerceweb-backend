@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Table(name="carrito")
+@Table(name="carrito", schema="ventastec")
 public class Carrito {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

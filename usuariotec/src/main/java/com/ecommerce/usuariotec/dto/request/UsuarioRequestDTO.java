@@ -11,4 +11,5 @@ public class UsuarioRequestDTO {
     private String telefono;
     private String direccion;
     private Long rolId;
+
 }

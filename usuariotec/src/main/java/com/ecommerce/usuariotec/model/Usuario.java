@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table (name="usuarios")
+@Table (name="usuarios", schema="usuariotec")
 public class Usuario {
 
     @Id
@@ -36,5 +36,7 @@ public class Usuario {
     @ManyToOne
     @JoinColumn (name="id_rol")
     private Rol rol;
+
+
 
 }

@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(name="productos")
+@Table(name="productos", schema="productec")
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

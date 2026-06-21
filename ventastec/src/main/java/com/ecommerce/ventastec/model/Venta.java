@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Table(name="ventas")
+@Table(name="ventas", schema="ventastec")
 public class Venta {
 
     @Id

@@ -24,8 +24,11 @@ public class DetalleCarritoController {
     }
     @PutMapping("/{productoDetalleId}/aumentar")
     public ResponseEntity<Void> aumentar(
+
             @PathVariable Long productoDetalleId) {
+
         detalleCarritoService.aumentar(productoDetalleId);
+
         return ResponseEntity.noContent().build();
     }
 

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "categorias")
+@Table(name = "categorias", schema = "productec")
 public class Categoria {
 
 

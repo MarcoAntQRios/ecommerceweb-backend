@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name="detalle_carrito")
+@Table(name="detalle_carrito", schema="ventastec")
 public class DetalleCarrito {
 
     @Id

@@ -2,6 +2,8 @@ package com.ecommerce.productec.service.impl;
 
 import com.ecommerce.productec.dto.request.ProductoRequestDTO;
 import com.ecommerce.productec.dto.response.ProductoResponseDTO;
+import com.ecommerce.productec.exception.ConflictException;
+import com.ecommerce.productec.exception.NotFoundException;
 import com.ecommerce.productec.mapper.ProductoMapper;
 import com.ecommerce.productec.model.Categoria;
 import com.ecommerce.productec.model.Producto;
@@ -36,11 +38,11 @@ public class ProductoServiceImpl implements ProductoService {
     public ProductoResponseDTO create(ProductoRequestDTO dto) {
 
         ProductoTipo productoTipo = productoTipoRepository.findById(dto.getTipoId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new NotFoundException(
                         "Tipo de producto no encontrado con id: " + dto.getTipoId()
                 ));
         Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new NotFoundException(
                         "Categoría no encontrada con id: " + dto.getCategoriaId()
                 ));
         Producto producto = productoMapper.toEntity(dto,productoTipo, categoria );
@@ -70,7 +72,7 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public ProductoResponseDTO buscarPorId(Long id) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException(
+                .orElseThrow(()-> new NotFoundException(
                         "Producto no encontrado con id: " + id
          ));
         return productoMapper.toDto(producto);
@@ -80,16 +82,16 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public ProductoResponseDTO actualizar(Long id, ProductoRequestDTO dto) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new NotFoundException(
                         "Producto no encontrado con id: " + id
                 ));
 
         ProductoTipo tipo = productoTipoRepository.findById(dto.getTipoId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new NotFoundException(
                         "Tipo de producto no encontrado con id: " + dto.getTipoId()
                 ));
         Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new NotFoundException(
                         "Categoría no encontrada con id: " + dto.getCategoriaId()
                 ));
         productoMapper.updateEntity(dto, producto, tipo, categoria);
@@ -99,7 +101,7 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public ProductoResponseDTO actualizarStock(Long id, Integer cantidad) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new NotFoundException(
                         "Producto no encontrado con id: " + id
                 ));
         producto.setStock(producto.getStock() + cantidad);
@@ -108,12 +110,12 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public void descontarStock(Long id, Integer cantidad) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new NotFoundException(
                         "Producto no encontrado con id: " + id
                 ));
 
         if (producto.getStock() < cantidad) {
-            throw new RuntimeException("Stock insuficiente");
+            throw new ConflictException("Stock insuficiente");
         }
 
         producto.setStock(producto.getStock() - cantidad);
@@ -123,7 +125,7 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public void eliminar(Long id) {
         if (!productoRepository.existsById(id)) {
-            throw new RuntimeException("Producto no encontrado con id: " + id);
+            throw new NotFoundException("Producto no encontrado con id: " + id);
         }
         productoRepository.deleteById(id);
     }

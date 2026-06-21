@@ -25,14 +25,12 @@ public class DetalleVentaServiceImpl implements DetalleVentaService {
         List<DetalleVenta> detalles = new ArrayList<>();
 
         for (DetalleVenta detalleVenta : detalleVentas) {
-            // crear detalle venta
             detalleVenta.setVenta(venta);
             detalles.add(detalleVenta);
-            //descontar stock
-            productoCliente.descontarStock(detalleVenta.getIdProducto(), detalleVenta.getCantidad());
-
-
+            // ← ELIMINA estas dos líneas:
+            // productoCliente.descontarStock(detalleVenta.getIdProducto(), detalleVenta.getCantidad());
         }
+
         System.out.println("Total detalles a guardar: " + detalles.size());
         return detalleVentaRepository.saveAll(detalles);
     }
